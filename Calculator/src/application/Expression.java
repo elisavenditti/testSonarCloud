@@ -1,0 +1,181 @@
+package application;
+
+import java.util.ArrayList;
+
+public class Expression {
+	private String espressione;
+	private static ArrayList<String> numbers = new ArrayList<>();
+	private static ArrayList<String> parentesi = new ArrayList<>();
+	private static ArrayList<String> operazioni = new ArrayList<>();
+	
+	public Expression(String e) {
+		this.espressione = e;
+		int i=0;
+		for(i=0; i<10; i++) {
+			numbers.add(Integer.toString(i));
+		}
+		parentesi.add("(");
+		parentesi.add(")");
+		operazioni.add("/");
+		operazioni.add("*");
+		operazioni.add("+");
+		operazioni.add("-");
+	}
+	
+	private boolean checkCorrectness(ArrayList<String> array) {
+		
+		int i=0;
+		boolean correct = true;
+		
+		//in posizione pari deve esserci un numero e in posizione dispari un'operazione
+		
+		
+		for(i=0; i<array.size(); i++) {
+			
+			if(i%2==0 || i==array.size()-1) {
+				if(array.get(i).compareTo("/")==0||array.get(i).compareTo("*")==0 ||
+						array.get(i).compareTo("+")==0 || array.get(i).compareTo("-")==0) correct=false;
+			} else {
+				if(array.get(i).compareTo("/")!=0 && array.get(i).compareTo("*")!=0 &&
+						array.get(i).compareTo("+")!=0 && array.get(i).compareTo("-")!=0) correct=false;
+			}
+			
+		}
+		
+		return correct;	
+	}
+	
+	
+	
+	
+	private ArrayList<String> stringToArray() {
+		System.out.println(this.espressione);
+		ArrayList<String> res = new ArrayList<>();
+		int i=1;	//next char
+		String temp = this.espressione;
+		while(true) {
+			
+			if(temp.length()==0) break;
+			else if(temp.substring(0, 1).compareTo("+")==0 || temp.substring(0, 1).compareTo("-")==0 ||
+					temp.substring(0, 1).compareTo("*")==0 || temp.substring(0, 1).compareTo("/")==0) {
+				System.out.println(temp.substring(0, 1));
+				res.add(temp.substring(0,1));
+				temp = temp.substring(1);	
+			}else{
+				String num = temp.substring(0, 1);
+				int len = temp.length();
+				if(len>1) {
+					while(numbers.contains(temp.substring(i, i+1))) {
+						num = num + temp.substring(i, i+1);
+						i++;
+						len--;
+						if(len==1) break;
+					}
+				}
+				res.add(num);
+				System.out.println(num);
+				temp = temp.substring(i);
+				i=1;
+			}
+			
+		}
+		
+		for(String s: res)
+			System.out.println(s);
+		
+		
+		
+		return res;
+	}
+	
+	private int numberOfOccurrences(ArrayList<String> expr, String s) {
+		int i=0;
+		
+		for(String element: expr) {
+			if(element.compareTo(s)==0) i++;
+		}		
+		
+		return i;
+	}
+	
+	
+	private ArrayList<String> calculate(ArrayList<String> expr, String op) {
+		
+		
+		int i=0;	
+		for(i=0; i<expr.size(); i++) {
+			if(expr.get(i).compareTo(op)==0) {
+				int prev = Integer.parseInt(expr.get(i-1));
+				int next = Integer.parseInt(expr.get(i+1));
+				int res=0;
+				switch(op) {
+					case "+":
+						res = prev+next;
+						break;
+					case "-":
+						res = prev-next;
+						break;
+					case "*":
+						res = prev*next;
+						break;
+					case "/":
+						res = prev/next;
+						break;
+					default: break;
+				}
+				expr.set(i-1, Integer.toString(res));
+				expr.remove(i+1);
+				expr.remove(i);
+				for(String s: expr)
+					System.out.println(s);
+				return expr;
+			}
+		}
+		for(String s: expr)
+			System.out.println(s);
+		return expr;
+	}
+		
+	
+	public String calculateResult() {
+		
+		ArrayList<String> a = stringToArray();
+		
+		if(!checkCorrectness(a)) {
+			return "error";
+		}
+		
+		//FASE DELLA DIVISIONE
+		int numDiv = this.numberOfOccurrences(a, "/");
+		int k;
+		for(k=0; k<numDiv; k++) {
+			calculate(a, "/");
+		}
+		
+		//FASE DELLA MOLTIPLICAZIONE
+		int numMolt = this.numberOfOccurrences(a, "*");
+		int j;
+		for(j=0; j<numMolt; j++) {
+			calculate(a, "*");
+		}
+		
+		//FASE DELLA SOTTRAZIONE
+				int numSott = this.numberOfOccurrences(a, "-");
+				int t;
+				for(t=0; t<numSott; t++) {
+					calculate(a, "-");
+				}
+		
+		//FASE DELL'ADDIZIONE
+		int numAdd = this.numberOfOccurrences(a, "+");
+		int z;
+		for(z=0; z<numAdd; z++) {
+			calculate(a, "+");
+		}
+		
+		
+		
+		if(a.size()!=1) return "error";
+		return a.get(0);
+	}
+}
