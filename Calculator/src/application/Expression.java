@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class Expression {
 	private String espressione;
 	private static ArrayList<String> numbers = new ArrayList<>();
-	private static ArrayList<String> parentesi = new ArrayList<>();
 	private static ArrayList<String> operazioni = new ArrayList<>();
 	
 	public Expression(String e) {
@@ -15,13 +14,55 @@ public class Expression {
 			numbers.add(Integer.toString(i));
 		}
 		numbers.add(".");
-		parentesi.add("(");
-		parentesi.add(")");
 		operazioni.add("/");
 		operazioni.add("*");
 		operazioni.add("+");
 		operazioni.add("-");
 	}
+	
+	
+	public String calculateResult() {
+		
+		ArrayList<String> a = expressionToArray();
+		
+		if(!checkCorrectness(a)) {
+			return "error";
+		}
+		
+		//FASE DELLA DIVISIONE
+		int numDiv = this.numberOfOccurrences(a, "/");
+		int k;
+		for(k=0; k<numDiv; k++) {
+			calculate(a, "/");
+		}
+		
+		//FASE DELLA MOLTIPLICAZIONE
+		int numMolt = this.numberOfOccurrences(a, "*");
+		int j;
+		for(j=0; j<numMolt; j++) {
+			calculate(a, "*");
+		}
+		
+		//FASE DELLA SOTTRAZIONE
+				int numSott = this.numberOfOccurrences(a, "-");
+				int t;
+				for(t=0; t<numSott; t++) {
+					calculate(a, "-");
+				}
+		
+		//FASE DELL'ADDIZIONE
+		int numAdd = this.numberOfOccurrences(a, "+");
+		int z;
+		for(z=0; z<numAdd; z++) {
+			calculate(a, "+");
+		}
+		
+		
+		
+		if(a.size()!=1) return "error";
+		return a.get(0);
+	}
+	
 	
 	private boolean checkCorrectness(ArrayList<String> array) {
 		
@@ -51,35 +92,40 @@ public class Expression {
 	
 	private ArrayList<String> expressionToArray() {
 		ArrayList<String> res = new ArrayList<>();
-		int i=1;	
+			
 		String temp = this.espressione;
 		while(true) {
 			
 			if(temp.length()==0) break;
-			else if(temp.substring(0, 1).compareTo("+")==0 || temp.substring(0, 1).compareTo("-")==0 ||
-					temp.substring(0, 1).compareTo("*")==0 || temp.substring(0, 1).compareTo("/")==0) {
+			else if(operazioni.contains(temp.substring(0, 1))) {
 				res.add(temp.substring(0,1));
 				temp = temp.substring(1);	
 			}else{
 				String num = temp.substring(0, 1);
+				StringBuilder bld = new StringBuilder();
+				bld.append(num);
+				int i=1;
 				int len = temp.length();
+				
+				
 				if(len>1) {
-					while(numbers.contains(temp.substring(i, i+1))) {
-						num = num + temp.substring(i, i+1);
+					
+					
+					while(len!=1 && numbers.contains(temp.substring(i, i+1))) {
+						bld.append(temp.substring(i, i+1));
 						i++;
 						len--;
-						if(len==1) break;
 					}
 				}
-				res.add(num);
+				res.add(bld.toString());
 				temp = temp.substring(i);
-				i=1;
 			}
 			
 		}
 		
 		return res;
 	}
+
 	
 	private int numberOfOccurrences(ArrayList<String> expr, String s) {
 		int i=0;
@@ -128,45 +174,5 @@ public class Expression {
 	}
 		
 	
-	public String calculateResult() {
-		
-		ArrayList<String> a = expressionToArray();
-		
-		if(!checkCorrectness(a)) {
-			return "error";
-		}
-		
-		//FASE DELLA DIVISIONE
-		int numDiv = this.numberOfOccurrences(a, "/");
-		int k;
-		for(k=0; k<numDiv; k++) {
-			calculate(a, "/");
-		}
-		
-		//FASE DELLA MOLTIPLICAZIONE
-		int numMolt = this.numberOfOccurrences(a, "*");
-		int j;
-		for(j=0; j<numMolt; j++) {
-			calculate(a, "*");
-		}
-		
-		//FASE DELLA SOTTRAZIONE
-				int numSott = this.numberOfOccurrences(a, "-");
-				int t;
-				for(t=0; t<numSott; t++) {
-					calculate(a, "-");
-				}
-		
-		//FASE DELL'ADDIZIONE
-		int numAdd = this.numberOfOccurrences(a, "+");
-		int z;
-		for(z=0; z<numAdd; z++) {
-			calculate(a, "+");
-		}
-		
-		
-		
-		if(a.size()!=1) return "error";
-		return a.get(0);
-	}
+	
 }

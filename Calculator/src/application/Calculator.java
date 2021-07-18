@@ -19,7 +19,6 @@ public class Calculator extends Application{
 	private TextField calcoli;
 	private TextField risultato;
 	private static ArrayList<String> numbers = new ArrayList<>();
-	private static ArrayList<String> parentesi = new ArrayList<>();
 	private static ArrayList<String> operazioni = new ArrayList<>();
 	
 	public static void main(String[] args){
@@ -27,8 +26,6 @@ public class Calculator extends Application{
 		for(i=0; i<10; i++) {
 			numbers.add(Integer.toString(i));
 		}
-		parentesi.add("(");
-		parentesi.add(")");
 		operazioni.add("+");
 		operazioni.add("-");
 		operazioni.add("*");
@@ -75,7 +72,7 @@ public class Calculator extends Application{
 			}};
 
 		ArrayList<Button> buttons = new ArrayList<>();
-		String labels[] = {".","0", "C","=","1","2","3","4","5","6","+","7","8","9","-","(",")","*","/"};
+		String[] labels = {".","0", "C","=","1","2","3","4","5","6","+","7","8","9","-","(",")","*","/"};
 		for(String b: labels) {
 			Button newB = new Button(b);
 			if(b.compareToIgnoreCase("=")==0) {
@@ -171,29 +168,36 @@ public class Calculator extends Application{
 		String label = bottone.getText();
 		String equazione = calcoli.getText();
 		
+		if(equazione==null||equazione.compareTo("")==0) {
+			if(numbers.contains(label)) {
+				equazione=label;
+				calcoli.setText(equazione);
+				return;
+			}
+			else {
+				risultato.setText("");
+				return;
+			}
+		}
+		
 		switch(label) {
 		
 		case "0":	case "1":	case "2": case "3":	case "4":	case "5":	case "6":	case "7":	case "8":	case "9":
-			if(equazione==null||equazione.compareTo("")==0) equazione=label;
-			else{	
-				//devo vedere se posso inserire il numero
-				String lastChar = equazione.substring(equazione.length()-1);
-				if(numbers.contains(lastChar) || operazioni.contains(lastChar) || lastChar.compareTo(".")==0) equazione = equazione + label;
-			}
+			String lastCharB = equazione.substring(equazione.length()-1);
+			if(numbers.contains(lastCharB) || operazioni.contains(lastCharB) || lastCharB.compareTo(".")==0) equazione = equazione + label;
+			
 			calcoli.setText(equazione);
 			break;
 		
 		
 		case "+": case "-": case "*": case "/":
-			if(equazione==null||equazione.compareTo("")==0) break;
-			else{
-				String lastChar = equazione.substring(equazione.length()-1);
+			String lastChar = equazione.substring(equazione.length()-1);
 			
-				if(lastChar.compareTo("(")==0 || operazioni.contains(lastChar)) break;
-				else equazione = equazione + label;
-				calcoli.setText(equazione);
-			}
+			if(operazioni.contains(lastChar)) break;
+			equazione = equazione + label;
+			calcoli.setText(equazione);
 			break;
+			
 		case "C":
 			calcoli.setText("");
 			risultato.setText("");
@@ -201,9 +205,8 @@ public class Calculator extends Application{
 			
 			
 		case ".":
-			if(equazione==null||equazione.compareTo("")==0) break;
-			String lastChar = equazione.substring(equazione.length()-1);
-			if(operazioni.contains(lastChar) || lastChar.compareTo(".")==0 || !commaAllowed(equazione)) break;
+			String lastCharA = equazione.substring(equazione.length()-1);
+			if(operazioni.contains(lastCharA) || lastCharA.compareTo(".")==0 || !commaAllowed(equazione)) break;
 			equazione = equazione + label;
 			calcoli.setText(equazione);
 			break;
@@ -211,7 +214,6 @@ public class Calculator extends Application{
 		case "=":
 			calcoli.setText("");
 			Expression exp = new Expression(equazione);
-			//imposta il risultato
 			risultato.setText(exp.calculateResult());
 			break;
 			
