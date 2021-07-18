@@ -14,6 +14,7 @@ public class Expression {
 		for(i=0; i<10; i++) {
 			numbers.add(Integer.toString(i));
 		}
+		numbers.add(".");
 		parentesi.add("(");
 		parentesi.add(")");
 		operazioni.add("/");
@@ -48,17 +49,15 @@ public class Expression {
 	
 	
 	
-	private ArrayList<String> stringToArray() {
-		System.out.println(this.espressione);
+	private ArrayList<String> expressionToArray() {
 		ArrayList<String> res = new ArrayList<>();
-		int i=1;	//next char
+		int i=1;	
 		String temp = this.espressione;
 		while(true) {
 			
 			if(temp.length()==0) break;
 			else if(temp.substring(0, 1).compareTo("+")==0 || temp.substring(0, 1).compareTo("-")==0 ||
 					temp.substring(0, 1).compareTo("*")==0 || temp.substring(0, 1).compareTo("/")==0) {
-				System.out.println(temp.substring(0, 1));
 				res.add(temp.substring(0,1));
 				temp = temp.substring(1);	
 			}else{
@@ -73,17 +72,11 @@ public class Expression {
 					}
 				}
 				res.add(num);
-				System.out.println(num);
 				temp = temp.substring(i);
 				i=1;
 			}
 			
 		}
-		
-		for(String s: res)
-			System.out.println(s);
-		
-		
 		
 		return res;
 	}
@@ -105,9 +98,9 @@ public class Expression {
 		int i=0;	
 		for(i=0; i<expr.size(); i++) {
 			if(expr.get(i).compareTo(op)==0) {
-				int prev = Integer.parseInt(expr.get(i-1));
-				int next = Integer.parseInt(expr.get(i+1));
-				int res=0;
+				double prev = Double.parseDouble(expr.get(i-1));
+				double next = Double.parseDouble(expr.get(i+1));
+				double res=0;
 				switch(op) {
 					case "+":
 						res = prev+next;
@@ -123,23 +116,21 @@ public class Expression {
 						break;
 					default: break;
 				}
-				expr.set(i-1, Integer.toString(res));
+				expr.set(i-1, Double.toString(res));
 				expr.remove(i+1);
 				expr.remove(i);
-				for(String s: expr)
-					System.out.println(s);
+
 				return expr;
 			}
 		}
-		for(String s: expr)
-			System.out.println(s);
+
 		return expr;
 	}
 		
 	
 	public String calculateResult() {
 		
-		ArrayList<String> a = stringToArray();
+		ArrayList<String> a = expressionToArray();
 		
 		if(!checkCorrectness(a)) {
 			return "error";

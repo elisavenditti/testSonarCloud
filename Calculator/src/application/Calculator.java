@@ -10,6 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Calculator extends Application{
@@ -69,17 +71,27 @@ public class Calculator extends Application{
 		EventHandler<ActionEvent> handler = new EventHandler<ActionEvent>(){	
 			@Override
 			public void handle(ActionEvent e) {
-				numberClick(e);
+				click(e);
 			}};
 
 		ArrayList<Button> buttons = new ArrayList<>();
 		String labels[] = {".","0", "C","=","1","2","3","4","5","6","+","7","8","9","-","(",")","*","/"};
 		for(String b: labels) {
 			Button newB = new Button(b);
-			if(b.compareToIgnoreCase("=")==0)
+			if(b.compareToIgnoreCase("=")==0) {
 				newB.setPrefSize(37, 95);
-			else newB.setPrefSize(40, 40);
-			newB.setStyle("-fx-background-radius: 15;");
+				newB.setStyle("-fx-background-radius: 15; -fx-background-color: linear-gradient(#ffa64d, #ff5050);-fx-text-fill: #FFFFFF");
+			}
+			
+			else if(b.compareTo("(")==0||b.compareTo(")")==0||b.compareTo("+")==0||
+					b.compareTo("-")==0||b.compareTo("*")==0||b.compareTo("/")==0) {
+				newB.setPrefSize(40, 40);
+				newB.setStyle("-fx-background-radius: 15; -fx-background-color: linear-gradient(#ffe066, #ffa64d);-fx-text-fill: #FFFFFF");
+				
+			} else {
+				newB.setPrefSize(40, 40);
+				newB.setStyle("-fx-background-radius: 15; -fx-background-color: #FFFFFF30; -fx-text-fill: #FFFFFF");
+			}
 			buttons.add(newB);
 			newB.setOnAction(handler);
 			
@@ -88,6 +100,11 @@ public class Calculator extends Application{
 		risultato = new TextField();
 		calcoli.setPrefSize(220, 50);
 		risultato.setPrefSize(220, 50);
+		calcoli.setStyle("-fx-background-color: #00000000; -fx-text-fill: #FFFFFF");
+		risultato.setStyle("-fx-background-color: #00000000; -fx-text-fill: #FFFFFF");
+		calcoli.setFont(Font.font("Arial Nova Light"));
+		risultato.setFont(Font.font("Arial Nova Light", FontWeight.NORMAL, 25));
+		
 		HBox zero = (HBox) rows.get(0);
 		zero.getChildren().add(calcoli);
 		HBox one = (HBox) rows.get(1);
@@ -132,8 +149,7 @@ public class Calculator extends Application{
 		v.getChildren().add(h2);
 		six.getChildren().add(v);
 		six.getChildren().add(buttons.get(3));
-		
-		
+		root.setStyle("-fx-background-color: linear-gradient( #001133B5, #001133);");
 		root.getChildren().add(rows.get(0));
 		root.getChildren().add(rows.get(1));
 		root.getChildren().add(rows.get(2));
@@ -149,7 +165,7 @@ public class Calculator extends Application{
 	}
 	
 	
-	private void numberClick(ActionEvent e) {
+	private void click(ActionEvent e) {
 
 		Button bottone = (Button) e.getSource();
 		String label = bottone.getText();
@@ -162,7 +178,7 @@ public class Calculator extends Application{
 			else{	
 				//devo vedere se posso inserire il numero
 				String lastChar = equazione.substring(equazione.length()-1);
-				if(numbers.contains(lastChar) || operazioni.contains(lastChar) || lastChar.compareTo("(")==0) equazione = equazione + label;
+				if(numbers.contains(lastChar) || operazioni.contains(lastChar) || lastChar.compareTo(".")==0) equazione = equazione + label;
 			}
 			calcoli.setText(equazione);
 			break;
@@ -178,35 +194,22 @@ public class Calculator extends Application{
 				calcoli.setText(equazione);
 			}
 			break;
-			
-		case "(":
-			if(equazione==null||equazione.compareTo("")==0) equazione=label;
-			else{	
-				//devo vedere se posso inserire la parentesi
-				String lastChar = equazione.substring(equazione.length()-1);
-				if(numbers.contains(lastChar) || lastChar.compareTo(")")==0) break;
-				else equazione = equazione + label;
-			}
-			calcoli.setText(equazione);
+		case "C":
+			calcoli.setText("");
+			risultato.setText("");
 			break;
 			
-		case ")":
+			
+		case ".":
 			if(equazione==null||equazione.compareTo("")==0) break;
-			else { 
-				String lastChar = equazione.substring(equazione.length()-1);
-				if(operazioni.contains(lastChar)) break;
-				else {
-					int opened = equazione.length() - equazione.replace("(", "").length();
-					int closed = equazione.length() - equazione.replace(")", "").length();
-					if(closed==opened) break;
-					else equazione=equazione+label;
-			}}
+			String lastChar = equazione.substring(equazione.length()-1);
+			if(operazioni.contains(lastChar) || lastChar.compareTo(".")==0 || !commaAllowed(equazione)) break;
+			equazione = equazione + label;
 			calcoli.setText(equazione);
 			break;
 			
 		case "=":
 			calcoli.setText("");
-			
 			Expression exp = new Expression(equazione);
 			//imposta il risultato
 			risultato.setText(exp.calculateResult());
@@ -219,6 +222,15 @@ public class Calculator extends Application{
 		
 		
 	}
-	
+	private boolean commaAllowed(String exp) {
+		
+		int k;
+		for(k=exp.length()-2; k>=0; k--) {
+			if((exp.substring(k, k+1)).compareTo(".")==0) return false;
+			else if(operazioni.contains(exp.substring(k, k+1))) return true;
+		}
+		
+		return true;
+	}
 	
 }

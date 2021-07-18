@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -18,7 +19,10 @@
             </HBox>
             <HBox prefHeight="50.0" prefWidth="200.0">
                <children>
-                  <TextField prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: #00000000;" />
+                  <TextField prefHeight="50.0" prefWidth="220.0" style="-fx-background-color: #00000000; -fx-text-fill: #FFFFFF;" text="18">
+                     <font>
+                        <Font name="Arial Nova Light" size="25.0" />
+                     </font></TextField>
                </children>
             </HBox>
             <Region prefHeight="40.0" prefWidth="220.0" />
@@ -32,7 +36,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="220.0" style="-fx-spacing: 15;">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 15;" text="7" />
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 15; -fx-background-color: #FFFFFF30; -fx-text-fill: #FFFFFF;" text="7" />
                   <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 15;" text="8" />
                   <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 15;" text="9" />
                   <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 15; -fx-background-color: linear-gradient(#ffe066, #ffa64d);" text="-" textFill="WHITE" />
